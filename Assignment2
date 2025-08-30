@@ -1,1 +1,203 @@
+#include <stdio.h>
 
+//Structure for account details
+struct Account{
+    char name[50];
+    int accountNumber;
+    float balance;
+};
+// function prototypes (declarations)
+int displayMenu();
+void createAccount(struct Account *array,int i);
+void depositMoney(struct Account *array,int i);
+void withdrawMoney(struct Account *array,int i);
+void checkBalance(struct Account *array,int i);
+void getUserInput();
+
+int main() {
+    int choice,countAccount=0;
+    int i=0;//Flag
+    struct Account array[100];
+
+    printf("Welcome to the Simple Banking System Designed by METU-NCC Student!\n");
+
+    do{//This do-wile loop repeats until the user chooses to 5(quit)
+
+    choice=displayMenu();//calling function in do-while loop for repitetion
+
+    if(choice==1) {
+        if (i >= 100) {
+            printf("Error! Account limit reached.\n");
+        } else {
+            createAccount(array, i);
+            countAccount++;
+            i++;//increment to i ,move to the next index for new account
+        }
+    }
+    else if(choice==2){
+        depositMoney(array,i);
+    }
+    else if(choice==3){
+        withdrawMoney(array,i);
+    }
+    else if(choice==4){
+        checkBalance(array,i);
+    }
+    else if(choice==5){
+        printf("\nThank you for using our Simple Banking System\n");
+        printf("Goodbye!");
+    }else{
+        printf("Invalid choice! Please select 1-5.\n");
+    }
+    }while(choice!=5);
+
+    return 0;
+}
+
+int displayMenu(){// This function displays the menu and returns the user's choice
+    int choice=0;
+    printf("\nMenu:\n");
+    printf("1. Create New Account\n"
+               "2. Deposit Money\n"
+               "3. Withdraw Money\n"
+               "4. Check Balance\n"
+               "5. Quit");
+    printf("\nEnter your choice: ");
+    if(scanf("%d", &choice)!=1){
+        choice=0;
+    }
+    getUserInput();
+
+    return choice;
+}
+
+void createAccount(struct Account *array,int i){//This function creates a new account and stores the details in the array
+
+    struct Account *accountNew=&array[i];
+
+    accountNew->accountNumber = 1001 + i;
+
+    printf("Enter your name: ");
+    scanf("%s", accountNew->name);
+    getUserInput();
+    printf("Enter initial deposit: ");
+    if (scanf("%f",&accountNew->balance)!=1||accountNew->balance<0.0f){
+        accountNew->balance=0.0f;
+        printf("Invalid amount! Initial balance set to 0.00\n");
+    }
+    getUserInput();
+    printf("Account created successfully!");
+    printf("\nAccount Holder Name is %s",accountNew->name);
+    printf("\nAccount number is %d",accountNew->accountNumber);
+}
+
+void depositMoney(struct Account *array,int i){//This function deposits money into an account
+    int accountNumber;
+    float deposit;
+
+    int validAccount=0;//Flag to check account number validity
+
+    printf("Enter account number: ");
+    if(scanf("%d",&accountNumber)!=1){
+        getUserInput();
+        printf("Error! Invalid account number.\n");
+        return;
+    }
+    getUserInput();
+
+    for(int k=0;k<i;k++) {
+        if (array[k].accountNumber == accountNumber) {
+            printf("Enter deposit amount: ");
+            if(scanf("%f",&deposit)!=1){
+                getUserInput();
+                printf("Error! Invalid amount.\n");
+                return;
+            }
+            getUserInput();
+
+            if(deposit<=0.0f){
+                printf("Error! Invalid amount.\n");
+                return;
+            }
+            array[k].balance=array[k].balance+deposit;
+            printf("Deposit successful! New balance: %.2f\n",array[k].balance);
+            validAccount=1;
+            break;
+        }
+    }
+    if(validAccount==0){
+        printf("Error! Invalid account number.\n");
+    }
+}
+void withdrawMoney(struct Account *array,int i){//This function withdraws money from an account
+    int accountNumber;
+    float money;
+
+    int validAccount=0;//Flag to check account number validity
+
+    printf("Enter account number: ");
+    if(scanf("%d",&accountNumber)!=1){
+        getUserInput();
+        printf("Error! Invalid account number.\n");
+        return;
+    }
+    getUserInput();
+
+    for(int k=0;k<i;k++) {
+        if (array[k].accountNumber == accountNumber) {
+            printf("Enter withdrawal amount: ");
+            if(scanf("%f",&money)!=1){
+                getUserInput();
+                printf("Error! Invalid amount.\n");
+                return;
+            }
+            getUserInput();
+
+            if(money<=0.0f){
+                printf("Error! Invalid amount.\n");
+                return;
+            }
+
+            if(array[k].balance<money){
+                printf("Error! Insufficient funds.\n");
+                return;
+            }
+
+            array[k].balance=array[k].balance -money;
+            printf("Withdrawal successful! New balance: %.2f\n",array[k].balance);
+            validAccount=1;
+            break;
+        }
+    }
+    if(validAccount==0){
+        printf("Error! Invalid account number.\n");
+    }
+}
+void checkBalance(struct Account *array,int i){//This function checks the balance of an account
+    int accountNumber;
+
+    int validAccount=0;//Flag to check account number validity
+
+    printf("Enter account number: ");
+    if (scanf("%d",&accountNumber) != 1) {
+        getUserInput();
+        printf("Error! Invalid account number.\n");
+        return;
+    }
+    getUserInput();
+
+    for(int k=0;k<i;k++) {
+        if (array[k].accountNumber == accountNumber) {
+            printf("Current balance: %.2f",array[k].balance);
+            validAccount=1;
+            break;
+        }
+    }
+    if(validAccount==0){
+        printf("Error! Invalid account number.");
+    }
+}
+void getUserInput(){
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) { }
+}
