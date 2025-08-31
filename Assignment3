@@ -1,1 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define N 3//symbolic constant
+int number_of_deaths(int,int);
+void risk_decider(int,int);
+int main() {
+    int city_population[N];
+    int newly_dead,dead_people;
+    for(int i=0;i<N;i++) {
+        printf("Enter the population for country[%d]:", i + 1);
+        scanf("%d", &city_population[i]);
+        while (city_population[i] < 1000 || city_population[i] > 9000) {
+            printf("Error! Enter a value between 1000-9000: ");
+            scanf("%d", &city_population[i]);
+        }
+    }
+        srand(time(NULL));
+        newly_dead=rand()%101;
 
+        printf("Number of dead people per day: %d",newly_dead);
+        printf("\nIn 7 days,the number of dead people will be %d",7*newly_dead);
+        dead_people= number_of_deaths(7,newly_dead);
+
+        printf("\nThese cities will be as follows:");
+        for(int i=0;i<N;i++){//this loop prints the all the cities death risks on screen
+            printf("\nCountry[%d]: ",i+1);
+            risk_decider(dead_people,city_population[i]);
+        }
+        return 0;
+}
+int number_of_deaths(int n,int newly_dead){//This function calculates the number of dead people
+    if(n==1){
+        return newly_dead;
+    }else{
+        return number_of_deaths(n-1,newly_dead)+newly_dead;//recursive function
+    }
+}
+void risk_decider(int dead_people,int population){//This function decides the death risk
+    int percent;
+    percent=(100*dead_people)/population;
+    if(percent>=50){
+        printf("High");
+    }else if(percent>=11){
+        printf("Medium");
+    }else{
+        printf("Low");
+    }
+}
