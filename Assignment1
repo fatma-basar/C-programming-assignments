@@ -1,1 +1,111 @@
+#include <stdio.h>
+int check_binary_valid(int);
+int decimal_to_binary(int);
+void calculate_outputs(int);
+int main() {
+    char option;
+    int base,input,binary_input;
+    int valid_input=0;
 
+    do{
+        printf("Hello, World!\n");
+        printf("Welcome to 1 to 4 Demultiplexer!\n");
+        printf("   a)  Compute and Display the outputs\n");
+        printf("   b)  Quit\n");
+
+       do{
+           printf("You choose: ");
+           scanf(" %c", &option);
+           printf("\nYou have chosen option: %c\n",option);
+        if (option=='a') {
+            valid_input = 0;
+            printf("Which base will you use to enter input (base 2 or base 10)?");
+            scanf("%d", &base);
+            while (!valid_input) {
+                if (base == 2) {
+                    printf("Please enter your input: ");
+                    scanf(" %d", &input);
+                    if (check_binary_valid(input)) {
+                        valid_input = 1;
+                        binary_input = input;
+                        calculate_outputs(binary_input);
+                    }
+                } else if (base == 10) {
+                    printf("\nPlease enter your input: ");
+                    scanf(" %d", &input);
+                    if (input > 7 || input < 0) {
+                        printf("\nDecimal %d cannot be represented with 3 bits. Please try again!", input);
+                    } else {
+                        valid_input = 1;
+                        binary_input = decimal_to_binary(input);
+                        calculate_outputs(binary_input);
+                    }
+                } else {
+                    printf("Invalid base! Please enter 2 or 10.\n");
+                    printf("Which base will you use to enter input (base 2 or base 10)?");
+                    scanf("%d", &base);
+                }
+            }
+        }
+
+        else if(option=='b') {
+                printf("You have chosen option b\n");
+                printf("BYEE!!\n");
+                return 0;
+            }else{
+                printf("Invalid option ! Choose either a or b!\n\n");
+
+            }
+       }while(option!='b');
+    }while(option!='b');
+
+    return 0;
+}
+int check_binary_valid(int input) {
+    int count_bit=0;//flag
+    int cpy_input=input;
+    if(input==0){
+        return 1;
+    }
+    while(cpy_input>0){
+        int digit=cpy_input%10;
+        if(digit!=0 && digit!=1){//Checks if input is valid in base 2 or not
+            printf("%d is not a valid number in base 2! Please try again!\n", input);
+            return 0;
+        }
+        cpy_input/=10;
+        count_bit++;
+    }
+    if(count_bit<3){// Checks if input has less than 3 bits
+        printf("You entered less than 3 bits! Please try again!\n");
+        return 0;}
+    if(count_bit>3){// Check if input has more than 3 bits
+        printf("You entered more than 3 bits! Please try again!\n");
+        return 0;}
+    return 1;
+}
+int decimal_to_binary(int input){
+    int place=1, result=0;
+    int count=0;
+    while(count<3){
+        result += (input%2)*place;
+        input/=2;
+        place*=10;
+        count++;
+    }
+    return result;
+}
+void calculate_outputs(int input) {
+    int S1,S0,D;
+    int y0,y1,y2,y3;
+    D=input%10;
+    S0=(input/10)%10;
+    S1=(input/100)%10;
+
+    //calculation
+    y0=(!S1 && !S0 && D);
+    y1=(!S1 && S0 && D);
+    y2=(S1 && !S0 && D);
+    y3=(S1 && S0 && D);
+    printf("\nY3 is %d Y2 is %d Y1 is %d Y0 is %d\n",y3,y2,y1,y0);//prints output on screen
+}
